@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>API Docs</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700"
+      rel="stylesheet"
+    />
+    <style>
+      body { margin: 0; padding: 0; }
+      #loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        font-family: sans-serif;
+        color: #666;
+        flex-direction: column;
+        gap: 12px;
+      }
+      #error {
+        display: none;
+        padding: 40px;
+        font-family: sans-serif;
+        color: #c0392b;
+        background: #fdf2f2;
+        border-left: 4px solid #c0392b;
+        margin: 40px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading">
+      <span>Carregando documentação...</span>
+    </div>
+    <div id="error"></div>
+    <div id="redoc-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/redoc/bundles/redoc.standalone.js"></script>
+    <script>
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        const specUrl = params.get("spec");
+        const DEFAULT_SPEC = "https://safracontrol.api.stg.services.souagrosolucoes.com.br/integration/api-json";
+        const urlToLoad = specUrl || DEFAULT_SPEC;
+
+        function isValidSpec(url) {
+          if (!url) return false;
+          if (url.startsWith("http://") || url.startsWith("https://")) return true;
+          if (url.startsWith("./") || url.startsWith("/")) return true;
+          return false;
+        }
+
+        if (specUrl && !isValidSpec(specUrl)) {
+          document.getElementById("loading").style.display = "none";
+          const err = document.getElementById("error");
+          err.style.display = "block";
+          err.textContent = "URL de spec inválida: " + specUrl;
+          return;
+        }
+
+        Redoc.init(
+          urlToLoad,
+          {
+            theme: {
+              colors: {
+                primary: { main: "#0066cc" },
+              },
+              typography: {
+                fontFamily: "Roboto, sans-serif",
+                headingsFamily: "Montserrat, sans-serif",
+              },
+            },
+            scrollYOffset: 60,
+            hideDownloadButton: false,
+          },
+          document.getElementById("redoc-container"),
+          function () {
+            document.getElementById("loading").style.display = "none";
+          }
+        );
+      })();
+    </script>
+  </body>
+</html>

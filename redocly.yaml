@@ -1,0 +1,19 @@
+apis:
+  main:
+    root: openapi/api.yaml
+
+theme:
+  openapi:
+    theme:
+      colors:
+        primary:
+          main: "#0066cc"
+      typography:
+        fontFamily: "Roboto, sans-serif"
+        headingsFamily: "Montserrat, sans-serif"
+
+lint:
+  rules:
+    no-unused-components: warn
+    operation-summary: error
+    info-contact: warn

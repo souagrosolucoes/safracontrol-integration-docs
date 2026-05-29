@@ -1,0 +1,13 @@
+{
+  "name": "api-docs",
+  "version": "1.0.0",
+  "description": "Documentação da API",
+  "scripts": {
+    "dev": "npx redocly preview-docs openapi/api.yaml",
+    "lint": "npx redocly lint openapi/api.yaml",
+    "build": "mkdir -p dist/openapi && cp index.html dist/index.html && cp openapi/api.yaml dist/openapi/api.yaml"
+  },
+  "devDependencies": {
+    "@redocly/cli": "^1.0.0"
+  }
+}
