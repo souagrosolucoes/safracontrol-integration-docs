@@ -4,7 +4,7 @@ Site de documentação estático para a API de integração do SafraControl.
 
 ## Stack
 
-- **Redoc standalone** (CDN) — renderiza a referência da API a partir de uma URL de spec
+- **Redoc standalone** (CDN) — renderiza a referência da API a partir de uma URL de spec; tema verde/agro aplicado
 - **HTML + CSS puro** — sem framework, sem build step
 - **`@redocly/cli`** — apenas para linting local da spec (`npm run lint`)
 - **GitHub Pages** — hospedagem via GitHub Actions

@@ -17,7 +17,7 @@
         position: fixed;
         top: 0; left: 0; right: 0;
         height: 52px;
-        background: #0055aa;
+        background: #2d6a2d;
         display: flex;
         align-items: center;
         padding: 0 24px;
@@ -148,11 +148,43 @@
           {
             theme: {
               colors: {
-                primary: { main: "#0066cc" },
+                primary: { main: "#3a7d44" },
+                success: { main: "#27ae60" },
+                warning: { main: "#e67e22" },
+                error:   { main: "#c0392b" },
+                text: {
+                  primary:   "#1c2b1c",
+                  secondary: "#4a5e4a",
+                },
+              },
+              sidebar: {
+                backgroundColor: "#1e2e1e",
+                textColor: "#d4e8d4",
+                activeTextColor: "#7ecb8f",
+                groupItems: {
+                  activeBackgroundColor: "#2a3e2a",
+                  activeTextColor: "#7ecb8f",
+                },
+                level1Items: {
+                  activeBackgroundColor: "#2a3e2a",
+                  activeTextColor: "#7ecb8f",
+                },
+                arrow: {
+                  color: "#7ecb8f",
+                },
+              },
+              rightPanel: {
+                backgroundColor: "#1a2e1a",
+                textColor: "#d4e8d4",
               },
               typography: {
                 fontFamily: "Roboto, sans-serif",
                 headingsFamily: "Montserrat, sans-serif",
+                code: {
+                  fontFamily: "'Fira Code', 'Courier New', monospace",
+                  color: "#7ecb8f",
+                  backgroundColor: "#1e2e1e",
+                },
               },
             },
             scrollYOffset: 60,
