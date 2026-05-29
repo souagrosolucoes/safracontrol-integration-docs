@@ -13,6 +13,7 @@ Site de documentação estático para a API de integração do SafraControl. Com
 │   └── workflows/
 │       └── deploy.yml                # Deploy automático no GitHub Pages
 ├── redocly.yaml                      # Configuração do Redocly CLI (lint)
+├── CLAUDE.md                         # Contexto do projeto para o agente de IA
 └── package.json
 ```
 
