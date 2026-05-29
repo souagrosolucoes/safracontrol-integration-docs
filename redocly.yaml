@@ -1,6 +1,6 @@
 apis:
   main:
-    root: openapi/api.yaml
+    root: https://safracontrol.api.stg.services.souagrosolucoes.com.br/integration/api-json
 
 theme:
   openapi:

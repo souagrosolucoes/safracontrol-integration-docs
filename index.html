@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>API Docs</title>
+    <title>SafraControl API — Documentação de Integração</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
@@ -9,30 +9,111 @@
       rel="stylesheet"
     />
     <style>
-      body { margin: 0; padding: 0; }
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 0; font-family: Roboto, sans-serif; }
+
+      /* ── Top nav ── */
+      #topnav {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        height: 52px;
+        background: #0055aa;
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        z-index: 10000;
+        gap: 0;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      }
+      #topnav .brand {
+        font-family: Montserrat, sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        color: #fff;
+        text-decoration: none;
+        margin-right: 32px;
+        white-space: nowrap;
+        letter-spacing: 0.3px;
+      }
+      #topnav .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex: 1;
+      }
+      #topnav a.nav-item {
+        color: rgba(255,255,255,0.85);
+        text-decoration: none;
+        font-size: 13.5px;
+        padding: 6px 12px;
+        border-radius: 4px;
+        transition: background 0.15s, color 0.15s;
+        white-space: nowrap;
+      }
+      #topnav a.nav-item:hover,
+      #topnav a.nav-item.active {
+        background: rgba(255,255,255,0.18);
+        color: #fff;
+      }
+      .nav-separator {
+        width: 1px;
+        height: 20px;
+        background: rgba(255,255,255,0.25);
+        margin: 0 8px;
+      }
+      .nav-badge {
+        display: inline-block;
+        background: #27ae60;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 10px;
+        margin-left: 5px;
+        vertical-align: middle;
+        letter-spacing: 0.4px;
+      }
+
+      /* ── Redoc container ── */
       #loading {
         display: flex;
         align-items: center;
         justify-content: center;
         height: 100vh;
-        font-family: sans-serif;
+        font-family: Roboto, sans-serif;
         color: #666;
         flex-direction: column;
         gap: 12px;
+        padding-top: 52px;
       }
       #error {
         display: none;
         padding: 40px;
-        font-family: sans-serif;
+        font-family: Roboto, sans-serif;
         color: #c0392b;
         background: #fdf2f2;
         border-left: 4px solid #c0392b;
-        margin: 40px;
+        margin: 60px 40px 40px;
         border-radius: 4px;
+      }
+      #redoc-container {
+        padding-top: 52px;
       }
     </style>
   </head>
   <body>
+
+    <nav id="topnav">
+      <a class="brand" href="index.html">SafraControl Integração</a>
+      <div class="nav-links">
+        <a class="nav-item active" href="index.html">Referência da API</a>
+        <div class="nav-separator"></div>
+        <a class="nav-item" href="docs/fluxos/criacao-pedido.html">
+          Fluxo: Criação de Pedido <span class="nav-badge">GUIA</span>
+        </a>
+      </div>
+    </nav>
+
     <div id="loading">
       <span>Carregando documentação...</span>
     </div>

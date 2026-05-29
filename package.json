@@ -1,11 +1,11 @@
 {
-  "name": "api-docs",
+  "name": "safracontrol-integration-docs",
   "version": "1.0.0",
-  "description": "Documentação da API",
+  "description": "Documentação de integração da API SafraControl",
   "scripts": {
-    "dev": "npx redocly preview-docs openapi/api.yaml",
-    "lint": "npx redocly lint openapi/api.yaml",
-    "build": "mkdir -p dist/openapi && cp index.html dist/index.html && cp openapi/api.yaml dist/openapi/api.yaml"
+    "dev": "npx redocly preview-docs https://safracontrol.api.stg.services.souagrosolucoes.com.br/integration/api-json",
+    "lint": "npx redocly lint",
+    "build": "mkdir -p dist && cp index.html dist/index.html && cp -r docs dist/docs"
   },
   "devDependencies": {
     "@redocly/cli": "^1.0.0"

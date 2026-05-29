@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <title>Fluxo: Criação de Pedido — SafraControl Integração</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700"
+      rel="stylesheet"
+    />
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 0; font-family: Roboto, sans-serif; color: #222; background: #f7f8fa; }
+
+      /* ── Top nav (igual ao index.html) ── */
+      #topnav {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        height: 52px;
+        background: #0055aa;
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        z-index: 10000;
+        gap: 0;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      }
+      #topnav .brand {
+        font-family: Montserrat, sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        color: #fff;
+        text-decoration: none;
+        margin-right: 32px;
+        white-space: nowrap;
+        letter-spacing: 0.3px;
+      }
+      #topnav .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex: 1;
+      }
+      #topnav a.nav-item {
+        color: rgba(255,255,255,0.85);
+        text-decoration: none;
+        font-size: 13.5px;
+        padding: 6px 12px;
+        border-radius: 4px;
+        transition: background 0.15s, color 0.15s;
+        white-space: nowrap;
+      }
+      #topnav a.nav-item:hover,
+      #topnav a.nav-item.active {
+        background: rgba(255,255,255,0.18);
+        color: #fff;
+      }
+      .nav-separator {
+        width: 1px;
+        height: 20px;
+        background: rgba(255,255,255,0.25);
+        margin: 0 8px;
+      }
+      .nav-badge {
+        display: inline-block;
+        background: #27ae60;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 10px;
+        margin-left: 5px;
+        vertical-align: middle;
+        letter-spacing: 0.4px;
+      }
+
+      /* ── Layout ── */
+      .page-wrapper {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 80px 32px 64px;
+      }
+
+      /* ── Typography ── */
+      h1 {
+        font-family: Montserrat, sans-serif;
+        font-size: 28px;
+        font-weight: 700;
+        color: #0055aa;
+        margin: 0 0 8px;
+      }
+      .subtitle {
+        color: #555;
+        font-size: 15px;
+        margin: 0 0 40px;
+      }
+      h2 {
+        font-family: Montserrat, sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: #0055aa;
+        margin: 48px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #dde4ef;
+      }
+      h3 {
+        font-family: Montserrat, sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin: 24px 0 10px;
+      }
+      p { line-height: 1.65; margin: 0 0 12px; }
+      ul, ol { line-height: 1.7; padding-left: 24px; margin: 0 0 12px; }
+      li { margin-bottom: 4px; }
+      code {
+        font-family: 'Fira Code', 'Courier New', monospace;
+        background: #eef1f8;
+        border: 1px solid #d3d9e8;
+        border-radius: 3px;
+        padding: 1px 5px;
+        font-size: 13px;
+        color: #1a3a6b;
+      }
+
+      /* ── Dependency diagram ── */
+      .diagram {
+        background: #fff;
+        border: 1px solid #dde4ef;
+        border-radius: 8px;
+        padding: 28px 32px;
+        margin: 24px 0 32px;
+        overflow-x: auto;
+      }
+      .diagram pre {
+        margin: 0;
+        font-family: 'Fira Code', 'Courier New', monospace;
+        font-size: 13.5px;
+        color: #2c3e50;
+        line-height: 1.7;
+      }
+
+      /* ── Step cards ── */
+      .step-card {
+        background: #fff;
+        border: 1px solid #dde4ef;
+        border-radius: 8px;
+        margin-bottom: 24px;
+        overflow: hidden;
+      }
+      .step-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px 24px;
+        background: #f0f4fb;
+        border-bottom: 1px solid #dde4ef;
+      }
+      .step-number {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #0055aa;
+        color: #fff;
+        font-family: Montserrat, sans-serif;
+        font-weight: 700;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .step-title {
+        font-family: Montserrat, sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        color: #0055aa;
+      }
+      .step-endpoint {
+        margin-left: auto;
+        font-family: 'Fira Code', 'Courier New', monospace;
+        font-size: 12.5px;
+        background: #0055aa;
+        color: #fff;
+        border-radius: 4px;
+        padding: 3px 10px;
+        white-space: nowrap;
+      }
+      .step-method {
+        display: inline-block;
+        background: #27ae60;
+        color: #fff;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 3px;
+        margin-right: 6px;
+        letter-spacing: 0.5px;
+      }
+      .step-body {
+        padding: 20px 24px;
+      }
+
+      /* ── Code blocks ── */
+      .code-block {
+        background: #1e2a3a;
+        border-radius: 6px;
+        padding: 16px 20px;
+        margin: 12px 0;
+        overflow-x: auto;
+      }
+      .code-block pre {
+        margin: 0;
+        font-family: 'Fira Code', 'Courier New', monospace;
+        font-size: 13px;
+        color: #e8eaf0;
+        line-height: 1.6;
+      }
+      .code-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        color: #888;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+      }
+      .json-key { color: #88c0f0; }
+      .json-str { color: #a3e4a3; }
+      .json-num { color: #f9c46b; }
+      .json-bool { color: #f97583; }
+      .json-comment { color: #6a7b8e; font-style: italic; }
+
+      /* ── Field table ── */
+      .field-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13.5px;
+        margin: 12px 0;
+      }
+      .field-table th {
+        text-align: left;
+        padding: 8px 12px;
+        background: #f0f4fb;
+        border: 1px solid #dde4ef;
+        font-family: Montserrat, sans-serif;
+        font-size: 12px;
+        font-weight: 700;
+        color: #445;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .field-table td {
+        padding: 8px 12px;
+        border: 1px solid #dde4ef;
+        vertical-align: top;
+        line-height: 1.5;
+      }
+      .field-table tr:nth-child(even) td { background: #f7f8fa; }
+      .tag-req {
+        display: inline-block;
+        background: #e74c3c;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 1px 5px;
+        border-radius: 3px;
+        letter-spacing: 0.4px;
+      }
+      .tag-opt {
+        display: inline-block;
+        background: #95a5a6;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 1px 5px;
+        border-radius: 3px;
+        letter-spacing: 0.4px;
+      }
+
+      /* ── Alert boxes ── */
+      .alert {
+        border-radius: 6px;
+        padding: 14px 18px;
+        margin: 16px 0;
+        font-size: 14px;
+        line-height: 1.6;
+        display: flex;
+        gap: 10px;
+      }
+      .alert-icon { font-size: 18px; flex-shrink: 0; line-height: 1.4; }
+      .alert-info { background: #e8f4fd; border-left: 4px solid #3498db; color: #1a5276; }
+      .alert-warn { background: #fef9e7; border-left: 4px solid #f39c12; color: #7d6608; }
+      .alert-tip  { background: #eafaf1; border-left: 4px solid #27ae60; color: #1e8449; }
+
+      /* ── Sub-steps for contacts ── */
+      .sub-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+        margin: 16px 0;
+      }
+      .sub-step {
+        background: #f0f4fb;
+        border: 1px solid #c8d3e8;
+        border-radius: 6px;
+        padding: 12px 14px;
+      }
+      .sub-step .sub-label {
+        font-family: Montserrat, sans-serif;
+        font-weight: 700;
+        font-size: 12.5px;
+        color: #0055aa;
+        margin-bottom: 4px;
+      }
+      .sub-step code {
+        font-size: 12px;
+        background: transparent;
+        border: none;
+        padding: 0;
+        color: #2c3e50;
+      }
+
+      /* ── Footer ── */
+      .page-footer {
+        margin-top: 64px;
+        padding-top: 24px;
+        border-top: 1px solid #dde4ef;
+        text-align: center;
+        color: #888;
+        font-size: 13px;
+      }
+      .page-footer a { color: #0055aa; text-decoration: none; }
+      .page-footer a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+
+    <nav id="topnav">
+      <a class="brand" href="../../index.html">SafraControl Integração</a>
+      <div class="nav-links">
+        <a class="nav-item" href="../../index.html">Referência da API</a>
+        <div class="nav-separator"></div>
+        <a class="nav-item active" href="criacao-pedido.html">
+          Fluxo: Criação de Pedido <span class="nav-badge">GUIA</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="page-wrapper">
+
+      <h1>Fluxo de Criação de Pedido</h1>
+      <p class="subtitle">
+        Guia passo a passo com a ordem correta de criação dos recursos necessários para registrar um pedido na API do SafraControl.
+      </p>
+
+      <h2>Visão Geral das Dependências</h2>
+      <p>
+        O pedido (<code>order</code>) depende de outros recursos que precisam existir previamente. O diagrama abaixo mostra todas as dependências obrigatórias e opcionais:
+      </p>
+
+      <div class="diagram">
+        <pre>
+  ┌─────────────┐    ┌──────────────────┐
+  │  Produtos   │    │    Contatos       │
+  │ /products   │    │                  │
+  │             │    │  /customers      │ ← Cliente (obrigatório)
+  │ /product-   │    │  /branch-offices │ ← Filial  (obrigatório)
+  │  varieties  │    │  /sellers        │ ← Vendedor (opcional)
+  └──────┬──────┘    │  /suppliers      │ ← Fornecedor (opcional)
+         │           │  /withdrawal-    │ ← Local de  (opcional)
+         │           │   places         │   Retirada
+         │           └────────┬─────────┘
+         │                    │
+         └──────────┬─────────┘
+                    ▼
+             ┌─────────────┐
+             │   /orders   │
+             │   Pedido    │
+             └──────┬──────┘
+                    │
+                    ▼
+            ┌──────────────┐
+            │ /order-items │
+            │ Itens do     │
+            │ Pedido       │
+            └──────────────┘
+        </pre>
+      </div>
+
+      <div class="alert alert-info">
+        <span class="alert-icon">ℹ️</span>
+        <div>
+          Todos os recursos utilizam o campo <code>externalId</code> como identificador externo. Use o ID do seu sistema como valor — a API usa esse campo para evitar duplicatas e para referências entre recursos.
+        </div>
+      </div>
+
+      <!-- PASSO 1 -->
+      <h2>Passo a Passo</h2>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-number">1</div>
+          <div class="step-title">Criar Produto</div>
+          <div class="step-endpoint"><span class="step-method">POST</span>/products</div>
+        </div>
+        <div class="step-body">
+          <p>
+            Cada item do pedido referencia um produto. Crie os produtos antes de criar os itens do pedido.
+            Se o produto já existir, você pode usar a opção de upsert (<code>?upsert=true</code> na query).
+          </p>
+
+          <h3>Campos principais</h3>
+          <table class="field-table">
+            <thead>
+              <tr>
+                <th>Campo</th>
+                <th>Tipo</th>
+                <th></th>
+                <th>Descrição</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>externalId</code></td>
+                <td>string</td>
+                <td><span class="tag-req">obrigatório</span></td>
+                <td>Identificador único no seu sistema</td>
+              </tr>
+              <tr>
+                <td><code>name</code></td>
+                <td>string</td>
+                <td><span class="tag-opt">opcional</span></td>
+                <td>Nome do produto</td>
+              </tr>
+              <tr>
+                <td><code>unit</code></td>
+                <td>string</td>
+                <td><span class="tag-opt">opcional</span></td>
+                <td>Unidade de medida (ex: <code>KG</code>, <code>SC</code>)</td>
+              </tr>
+              <tr>
+                <td><code>group</code></td>
+                <td>object</td>
+                <td><span class="tag-opt">opcional</span></td>
+                <td>Grupo do produto — <code>{ "externalId": "..." }</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="code-label">Exemplo de requisição</div>
+          <div class="code-block"><pre><span class="json-comment">// POST /products</span>
+{
+  <span class="json-key">"externalId"</span>: <span class="json-str">"PROD-001"</span>,
+  <span class="json-key">"name"</span>: <span class="json-str">"Soja"</span>,
+  <span class="json-key">"unit"</span>: <span class="json-str">"SC"</span>,
+  <span class="json-key">"weight"</span>: <span class="json-num">60</span>
+}</pre></div>
+        </div>
+      </div>
+
+      <!-- PASSO 2 -->
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-number">2</div>
+          <div class="step-title">Criar Contatos</div>
+          <div class="step-endpoint"><span class="step-method">POST</span>/contacts (e subtipos)</div>
+        </div>
+        <div class="step-body">
+          <p>
+            O pedido precisa de pelo menos um <strong>cliente</strong> e uma <strong>filial</strong>. Outros tipos de contato são opcionais,
+            mas frequentemente usados. Crie cada tipo de contato pelo seu endpoint específico:
+          </p>
+
+          <div class="sub-steps">
+            <div class="sub-step">
+              <div class="sub-label">Cliente <span class="tag-req">obrigatório</span></div>
+              <code>POST /customers</code>
+            </div>
+            <div class="sub-step">
+              <div class="sub-label">Filial <span class="tag-req">obrigatório</span></div>
+              <code>POST /branch-offices</code>
+            </div>
+            <div class="sub-step">
+              <div class="sub-label">Vendedor <span class="tag-opt">opcional</span></div>
+              <code>POST /sellers</code>
+            </div>
+            <div class="sub-step">
+              <div class="sub-label">Fornecedor <span class="tag-opt">opcional</span></div>
+              <code>POST /suppliers</code>
+            </div>
+            <div class="sub-step">
+              <div class="sub-label">Local de Retirada <span class="tag-opt">opcional</span></div>
+              <code>POST /withdrawal-places</code>
+            </div>
+            <div class="sub-step">
+              <div class="sub-label">Local de Entrega <span class="tag-opt">opcional</span></div>
+              <code>POST /deposits</code>
+            </div>
+          </div>
+
+          <div class="alert alert-tip">
+            <span class="alert-icon">💡</span>
+            <div>
+              Todos os subtipos compartilham a mesma estrutura base com <code>externalId</code> obrigatório.
+              O endpoint <code>POST /contacts</code> cria contatos genéricos; use os endpoints específicos para garantir que o tipo correto seja associado automaticamente.
+            </div>
+          </div>
+
+          <h3>Campos principais (todos os subtipos)</h3>
+          <table class="field-table">
+            <thead>
+              <tr>
+                <th>Campo</th>
+                <th>Tipo</th>
+                <th></th>
+                <th>Descrição</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>externalId</code></td>
+                <td>string</td>
+                <td><span class="tag-req">obrigatório</span></td>
+                <td>Identificador único no seu sistema</td>
+              </tr>
+              <tr>
+                <td><code>name</code></td>
+                <td>string</td>
+                <td><span class="tag-opt">opcional</span></td>
+                <td>Nome / razão social do contato</td>
+              </tr>
+              <tr>
+                <td><code>document</code></td>
+                <td>string</td>
+                <td><span class="tag-opt">opcional</span></td>
+                <td>CPF ou CNPJ</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="code-label">Exemplo — Criar cliente</div>
+          <div class="code-block"><pre><span class="json-comment">// POST /customers</span>
+{
+  <span class="json-key">"externalId"</span>: <span class="json-str">"CLI-100"</span>,
+  <span class="json-key">"name"</span>: <span class="json-str">"Fazenda Boa Vista Ltda"</span>,
+  <span class="json-key">"document"</span>: <span class="json-str">"12.345.678/0001-90"</span>
+}</pre></div>
+
+          <div class="code-label">Exemplo — Criar filial</div>
+          <div class="code-block"><pre><span class="json-comment">// POST /branch-offices</span>
+{
+  <span class="json-key">"externalId"</span>: <span class="json-str">"FILIAL-01"</span>,
+  <span class="json-key">"name"</span>: <span class="json-str">"Filial São Paulo"</span>
+}</pre></div>
+
+          <h3>Adicionar endereço ao contato (opcional)</h3>
+          <p>
+            Após criar um contato, você pode associar endereços usando o endpoint aninhado:
+          </p>
+          <div class="code-block"><pre><span class="json-comment">// POST /contact/{contactExternalId}/addresses</span>
+{
+  <span class="json-key">"externalId"</span>: <span class="json-str">"END-100-1"</span>,
+  <span class="json-key">"street"</span>: <span class="json-str">"Av. Paulista"</span>,
+  <span class="json-key">"number"</span>: <span class="json-str">"1000"</span>,
+  <span class="json-key">"city"</span>: <span class="json-str">"São Paulo"</span>,
+  <span class="json-key">"state"</span>: <span class="json-str">"SP"</span>
+}</pre></div>
+        </div>
+      </div>
+
+      <!-- PASSO 3 -->
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-number">3</div>
+          <div class="step-title">Criar Pedido</div>
+          <div class="step-endpoint"><span class="step-method">POST</span>/orders</div>
+        </div>
+        <div class="step-body">
+          <p>
+            Com produtos e contatos criados, você já pode criar o pedido. As referências são feitas pelo <code>externalId</code> de cada recurso.
+          </p>
+
+          <h3>Campos principais</h3>
+          <table class="field-table">
+            <thead>
+              <tr>
+                <th>Campo</th>
+                <th>Tipo</th>
+                <th></th>
+                <th>Descrição</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>externalId</code></td>
+                <td>string</td>
+                <td><span class="tag-req">obrigatório</span></td>
+                <td>Identificador único do pedido no seu sistema</td>
+              </tr>
+              <tr>
+                <td><code>customer</code></td>
+                <td>object</td>
+                <td><span class="tag-req">obrigatório</span></td>
+                <td>Referência ao cliente — <code>{ "externalId": "CLI-100" }</code></td>
+              </tr>
+              <tr>
+                <td><code>branchOffice</code></td>
+                <td>object</td>
+                <td><span class="tag-req">obrigatório</span></td>
+                <td>Referência à filial — <code>{ "externalId": "FILIAL-01" }</code></td>
+              </tr>
+              <tr>
+                <td><code>freightType</code></td>
+                <td>string</td>
+                <td><span class="tag-req">obrigatório</span></td>
+                <td>Tipo de frete (ex: <code>CIF</code>, <code>FOB</code>)</td>
+              </tr>
+              <tr>
+                <td><code>dueDate</code></td>
+                <td>string</td>
+                <td><span class="tag-req">obrigatório</span></td>
+                <td>Data de vencimento — formato ISO 8601</td>
+              </tr>
+              <tr>
+                <td><code>period</code></td>
+                <td>object</td>
+                <td><span class="tag-req">obrigatório</span></td>
+                <td>Período de safra — <code>{ "externalId": "..." }</code></td>
+              </tr>
+              <tr>
+                <td><code>seller</code></td>
+                <td>object</td>
+                <td><span class="tag-opt">opcional</span></td>
+                <td>Referência ao vendedor — <code>{ "externalId": "VEND-01" }</code></td>
+              </tr>
+              <tr>
+                <td><code>regional</code></td>
+                <td>object</td>
+                <td><span class="tag-opt">opcional</span></td>
+                <td>Referência à regional — <code>{ "externalId": "..." }</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="code-label">Exemplo de requisição</div>
+          <div class="code-block"><pre><span class="json-comment">// POST /orders</span>
+{
+  <span class="json-key">"externalId"</span>: <span class="json-str">"PED-2024-001"</span>,
+  <span class="json-key">"freightType"</span>: <span class="json-str">"CIF"</span>,
+  <span class="json-key">"dueDate"</span>: <span class="json-str">"2024-12-31"</span>,
+  <span class="json-key">"customer"</span>: { <span class="json-key">"externalId"</span>: <span class="json-str">"CLI-100"</span> },
+  <span class="json-key">"branchOffice"</span>: { <span class="json-key">"externalId"</span>: <span class="json-str">"FILIAL-01"</span> },
+  <span class="json-key">"period"</span>: { <span class="json-key">"externalId"</span>: <span class="json-str">"SAFRA-2024"</span> },
+  <span class="json-key">"seller"</span>: { <span class="json-key">"externalId"</span>: <span class="json-str">"VEND-01"</span> }
+}</pre></div>
+
+          <div class="alert alert-warn">
+            <span class="alert-icon">⚠️</span>
+            <div>
+              Os campos <code>customer</code>, <code>branchOffice</code> e <code>period</code> precisam referenciar recursos que <strong>já existam</strong> na API. Se a referência não for encontrada, a criação retornará erro <code>400</code>.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASSO 4 -->
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-number">4</div>
+          <div class="step-title">Criar Itens do Pedido</div>
+          <div class="step-endpoint"><span class="step-method">POST</span>/order-items</div>
+        </div>
+        <div class="step-body">
+          <p>
+            Por último, crie os itens vinculando cada produto ao pedido criado no passo anterior.
+            Um pedido pode ter múltiplos itens — envie uma requisição para cada item.
+          </p>
+
+          <h3>Campos principais</h3>
+          <table class="field-table">
+            <thead>
+              <tr>
+                <th>Campo</th>
+                <th>Tipo</th>
+                <th></th>
+                <th>Descrição</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>externalId</code></td>
+                <td>string</td>
+                <td><span class="tag-req">obrigatório</span></td>
+                <td>Identificador único do item no seu sistema</td>
+              </tr>
+              <tr>
+                <td><code>order</code></td>
+                <td>object</td>
+                <td><span class="tag-opt">opcional</span></td>
+                <td>Referência ao pedido — <code>{ "externalId": "PED-2024-001" }</code></td>
+              </tr>
+              <tr>
+                <td><code>product</code></td>
+                <td>object</td>
+                <td><span class="tag-opt">opcional</span></td>
+                <td>Referência ao produto — <code>{ "externalId": "PROD-001" }</code></td>
+              </tr>
+              <tr>
+                <td><code>quantity</code></td>
+                <td>number</td>
+                <td><span class="tag-opt">opcional</span></td>
+                <td>Quantidade do item</td>
+              </tr>
+              <tr>
+                <td><code>unitValue</code></td>
+                <td>number</td>
+                <td><span class="tag-opt">opcional</span></td>
+                <td>Valor unitário</td>
+              </tr>
+              <tr>
+                <td><code>withdrawalPlace</code></td>
+                <td>object</td>
+                <td><span class="tag-opt">opcional</span></td>
+                <td>Local de retirada — <code>{ "externalId": "RETIRADA-01" }</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="code-label">Exemplo de requisição</div>
+          <div class="code-block"><pre><span class="json-comment">// POST /order-items</span>
+{
+  <span class="json-key">"externalId"</span>: <span class="json-str">"ITEM-2024-001-1"</span>,
+  <span class="json-key">"order"</span>: { <span class="json-key">"externalId"</span>: <span class="json-str">"PED-2024-001"</span> },
+  <span class="json-key">"product"</span>: { <span class="json-key">"externalId"</span>: <span class="json-str">"PROD-001"</span> },
+  <span class="json-key">"quantity"</span>: <span class="json-num">100</span>,
+  <span class="json-key">"unitValue"</span>: <span class="json-num">150.00</span>,
+  <span class="json-key">"status"</span>: <span class="json-str">"active"</span>
+}</pre></div>
+        </div>
+      </div>
+
+      <!-- Resumo -->
+      <h2>Resumo da Ordem de Criação</h2>
+      <ol>
+        <li>Crie os <strong>grupos de produtos</strong> (<code>POST /groups</code>) se necessário</li>
+        <li>Crie os <strong>produtos</strong> (<code>POST /products</code>) — use <code>?upsert=true</code> para atualizar se já existir</li>
+        <li>Crie os <strong>períodos</strong> (<code>POST /periods</code>) se necessário</li>
+        <li>Crie a <strong>filial</strong> (<code>POST /branch-offices</code>)</li>
+        <li>Crie o <strong>cliente</strong> (<code>POST /customers</code>)</li>
+        <li>Crie os demais contatos opcionais: vendedor (<code>/sellers</code>), fornecedor (<code>/suppliers</code>), local de retirada (<code>/withdrawal-places</code>)</li>
+        <li>Crie o <strong>pedido</strong> (<code>POST /orders</code>)</li>
+        <li>Crie os <strong>itens do pedido</strong> (<code>POST /order-items</code>)</li>
+      </ol>
+
+      <div class="alert alert-tip">
+        <span class="alert-icon">💡</span>
+        <div>
+          Use <code>?upsert=true</code> nas requisições para criar ou atualizar um recurso em uma única chamada, sem precisar verificar se ele já existe. Isso simplifica a lógica de sincronização do seu sistema.
+        </div>
+      </div>
+
+      <div class="page-footer">
+        <p>
+          <a href="../../index.html">← Voltar para a Referência da API</a>
+          &nbsp;·&nbsp;
+          SafraControl — API de Integração
+        </p>
+      </div>
+
+    </div>
+  </body>
+</html>
