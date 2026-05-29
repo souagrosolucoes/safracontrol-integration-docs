@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Documentação de integração da API SafraControl",
   "scripts": {
-    "dev": "npx redocly preview-docs https://safracontrol.api.stg.services.souagrosolucoes.com.br/integration/api-json",
+    "dev": "npx serve . --listen 8080",
     "lint": "npx redocly lint",
     "build": "mkdir -p dist && cp index.html dist/index.html && cp -r docs dist/docs"
   },
